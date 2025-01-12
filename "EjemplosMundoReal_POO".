@@ -1,0 +1,79 @@
+class Product:
+    def __init__(self, name, price, stock):
+        self.name = name
+        self.price = price
+        self.stock = stock
+
+    def purchase(self, quantity):
+        if quantity <= self.stock:
+            self.stock -= quantity
+            total_price = quantity * self.price
+            print(f"{quantity} x {self.name} purchased for ${total_price:.2f}.")
+            return total_price
+        else:
+            print(f"Insufficient stock for {self.name}. Only {self.stock} left.")
+            return 0
+
+    def restock(self, quantity):
+        self.stock += quantity
+        print(f"{self.name} restocked. New stock: {self.stock}.")
+
+class ShoppingCart:
+    def __init__(self):
+        self.items = []
+        self.total_cost = 0
+
+    def add_item(self, product, quantity):
+        cost = product.purchase(quantity)
+        if cost > 0:
+            self.items.append((product.name, quantity, cost))
+            self.total_cost += cost
+
+    def view_cart(self):
+        if not self.items:
+            print("Cart is empty.")
+        else:
+            print("Shopping Cart:")
+            for name, quantity, cost in self.items:
+                print(f"- {quantity} x {name} ($ {cost:.2f})")
+            print(f"Total Cost: ${self.total_cost:.2f}")
+
+    def checkout(self):
+        if not self.items:
+            print("Cart is empty. Add items before checking out.")
+        else:
+            print("Checking out...")
+            self.view_cart()
+            print("Thank you for your purchase!")
+            self.items = []
+            self.total_cost = 0
+
+# Example usage
+def main():
+    # Create products
+    apple = Product("Apple", 0.5, 100)
+    bread = Product("Bread", 2.5, 20)
+    milk = Product("Milk", 1.5, 10)
+
+    # Create a shopping cart
+    cart = ShoppingCart()
+
+    # Interact with the system
+    cart.add_item(apple, 5)
+    cart.add_item(bread, 2)
+    cart.add_item(milk, 1)
+    cart.view_cart()
+
+    cart.add_item(milk, 15)  # Attempt to purchase more than available
+    cart.view_cart()
+
+    cart.checkout()
+    cart.view_cart()  # Verify cart is empty after checkout
+
+    # Restocking and purchasing again
+    milk.restock(20)
+    cart.add_item(milk, 5)
+    cart.view_cart()
+
+if __name__ == "__main__":
+    main()
